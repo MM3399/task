@@ -20,10 +20,11 @@ const saveList = ((req, res) => {
     if (authorization==="valid") {
         let newtoDoList = new toDoList({
             title: req.body.title,
-            subtask: req.body.subtask,
             status: req.body.status,
             created_at: req.body.created_at
         })
+        const subtask = req.body.subtask.split(',');
+        newtoDoList.subTask.push(subtask)
         newtoDoList.save()
             .then(() => {
                 res.json("Data saved successfully")
@@ -41,16 +42,17 @@ const saveList = ((req, res) => {
 const updateList = ((req, res) => {
     //let authorization = app.get('authorization');
     let authorization = req.get('cookie').split('=')[1]
-    if (authorization === "valid") {
+    if (authorization === "valid"){
         toDoList.findById(req.body._id, (err, data) => {
             if (err) {
                 res.json("There's error on server side. Sorry For inconvenience");
                 console.log("Due to the error data was not found", err);
             }
             else {
+                const subtask = req.body.subtask.split(',');
                 data.title = req.body.title;
-                data.subtask = req.body.subtask;
                 data.status = req.body.status;
+                data.subTask.push(subtask)
                 data.updated_at = req.body.updated_at;
                 data.save();
                 console.log(data)
